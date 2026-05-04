@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"os/exec"
 	"path/filepath"
@@ -59,6 +60,6 @@ func m2ts2mkv(m2ts string, flac bool) error {
 		return err
 	} else {
 		log.Printf("Output: %s\n", string(out))
-		return nil
+		return os.Remove(m2ts)
 	}
 }
