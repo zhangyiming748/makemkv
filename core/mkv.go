@@ -1,4 +1,4 @@
-\package core
+package core
 
 import (
 	"fmt"
@@ -27,6 +27,7 @@ func M2TS2MKV(root string) error {
 			}
 		}
 	}
+	return nil
 }
 
 func m2ts2mkv(m2ts string) error {
