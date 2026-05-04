@@ -3,7 +3,11 @@ package main
 import (
 	"fmt"
 	"os"
+	"time"
 
+	"github.com/zhangyiming748/lumberjack"
+	"io"
+	"log"
 	"makemkv/core"
 
 	"github.com/spf13/cobra"
@@ -21,6 +25,7 @@ import (
 */
 
 func main() {
+	SetLog("m2ts2mkv.log")
 	var rootCmd = &cobra.Command{
 		Use:   "makemkv",
 		Short: "MakeMKV - M2TS to MKV converter",
@@ -56,4 +61,28 @@ func main() {
 		fmt.Println(err)
 		os.Exit(1)
 	}
+}
+
+func SetLog(l string) {
+	// 设置全局时区为Asia/Shanghai
+	location, err := time.LoadLocation("Asia/Shanghai")
+	if err != nil {
+		log.Printf("无法加载时区 Asia/Shanghai: %v", err)
+	} else {
+		time.Local = location
+	}
+	// 创建一个用于写入文件的Logger实例
+	fileLogger := &lumberjack.Logger{
+		Filename:   l,
+		MaxSize:    1, // MB
+		MaxBackups: 1,
+		MaxAge:     28, // days
+	}
+	err = fileLogger.Rotate()
+	if err != nil {
+		log.Println("转换新日志文件失败", err)
+	}
+	consoleLogger := log.New(os.Stdout, "CONSOLE: ", log.LstdFlags)
+	log.SetOutput(io.MultiWriter(fileLogger, consoleLogger.Writer()))
+	log.SetFlags(log.Ltime | log.Lshortfile)
 }
