@@ -5,10 +5,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/zhangyiming748/lumberjack"
 	"io"
 	"log"
 	"makemkv/core"
+
+	"github.com/zhangyiming748/lumberjack"
 
 	"github.com/spf13/cobra"
 )
@@ -67,7 +68,7 @@ func SetLog(l string) {
 	// 设置全局时区为Asia/Shanghai
 	location, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
-		log.Printf("无法加载时区 Asia/Shanghai: %v", err)
+		log.Printf("Failed to load timezone Asia/Shanghai: %v", err)
 	} else {
 		time.Local = location
 	}
@@ -80,7 +81,7 @@ func SetLog(l string) {
 	}
 	err = fileLogger.Rotate()
 	if err != nil {
-		log.Println("转换新日志文件失败", err)
+		log.Println("Failed to rotate log file", err)
 	}
 	consoleLogger := log.New(os.Stdout, "CONSOLE: ", log.LstdFlags)
 	log.SetOutput(io.MultiWriter(fileLogger, consoleLogger.Writer()))

@@ -14,14 +14,14 @@ import (
 func M2TS2MKV(root string, flac bool) error {
 	folders := finder.FindAllFolders(root)
 	for i, folder := range folders {
-		log.Printf("正在处理%d/%d\n文件夹 %s\n", i+1, len(folders), folder)
+		log.Printf("Processing %d/%d\nFolder: %s\n", i+1, len(folders), folder)
 		files := finder.FindAllFiles(folder)
 		for j, file := range files {
-			log.Printf("正在处理%d/%d\n文件 %s\n", j+1, len(files), file)
+			log.Printf("Processing %d/%d\nFile: %s\n", j+1, len(files), file)
 			ext := strings.ToLower(filepath.Ext(file))
 			if ext == ".m2ts" {
 				if err := m2ts2mkv(file, flac); err != nil {
-					log.Printf("处理文件 %s 失败：%s\n", file, err)
+					log.Printf("Failed to process file %s: %s\n", file, err)
 					continue
 				}
 			}
@@ -53,12 +53,12 @@ func m2ts2mkv(m2ts string, flac bool) error {
 	args = append(args, "-f", "matroska")
 	args = append(args, mkv)
 	cmd = exec.Command("ffmpeg", args...)
-	log.Printf("准备运行的命令是%s\n", cmd.String())
+	log.Printf("Command: %s\n", cmd.String())
 	out, err := cmd.CombinedOutput()
 	if err != nil {
 		return err
 	} else {
-		log.Printf("命令输出是%s\n", string(out))
+		log.Printf("Output: %s\n", string(out))
 		return nil
 	}
 }
