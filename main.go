@@ -43,7 +43,8 @@ func main() {
 				return fmt.Errorf("directory path cannot be empty")
 			}
 			flac, _ := cmd.Flags().GetBool("flac")
-			return core.M2TS2MKV(dir, flac)
+			keep, _ := cmd.Flags().GetBool("keep")
+			return core.M2TS2MKV(dir, flac, keep)
 		},
 	}
 
@@ -54,7 +55,10 @@ func main() {
 	// 添加 --flac 参数，控制是否将音频转换为 FLAC 格式
 	m2mCmd.Flags().BoolP("flac", "f", false, "Convert audio to FLAC format (default: false)")
 
-	// 将子命令添加到主命令
+	// 添加 -k/--keep 参数，控制是否保留原始 m2ts 文件
+	m2mCmd.Flags().BoolP("keep", "k", false, "Keep original M2TS files after conversion (default: false)")
+
+	// //将子命令添加到主命令
 	rootCmd.AddCommand(m2mCmd)
 
 	// 执行命令

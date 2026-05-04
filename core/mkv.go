@@ -12,7 +12,7 @@ import (
 	"github.com/zhangyiming748/finder"
 )
 
-func M2TS2MKV(root string, flac bool) error {
+func M2TS2MKV(root string, flac bool, keep bool) error {
 	folders := finder.FindAllFolders(root)
 	for i, folder := range folders {
 		log.Printf("Processing %d/%d\nFolder: %s\n", i+1, len(folders), folder)
@@ -21,7 +21,7 @@ func M2TS2MKV(root string, flac bool) error {
 			log.Printf("Processing %d/%d\nFile: %s\n", j+1, len(files), file)
 			ext := strings.ToLower(filepath.Ext(file))
 			if ext == ".m2ts" {
-				if err := m2ts2mkv(file, flac); err != nil {
+				if err := m2ts2mkv(file, flac, keep); err != nil {
 					log.Printf("Failed to process file %s: %s\n", file, err)
 					continue
 				}
@@ -31,7 +31,7 @@ func M2TS2MKV(root string, flac bool) error {
 	return nil
 }
 
-func m2ts2mkv(m2ts string, flac bool) error {
+func m2ts2mkv(m2ts string, flac bool, keep bool) error {
 	fmt.Println("m2ts to mkv")
 	var (
 		args []string
@@ -60,6 +60,10 @@ func m2ts2mkv(m2ts string, flac bool) error {
 		return err
 	} else {
 		log.Printf("Output: %s\n", string(out))
-		return os.Remove(m2ts)
+		if keep {
+			return nil
+		} else {
+			return os.Remove(m2ts)
+		}
 	}
 }
