@@ -1,4 +1,4 @@
-package core
+\package core
 
 import (
 	"fmt"
@@ -7,17 +7,30 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+
+	"github.com/zhangyiming748/finder"
 )
+
+func M2TS2MKV(root string) error {
+	folders := finder.FindAllFolders(root)
+	for i, folder := range folders {
+		log.Printf("正在处理%d/%d\n文件夹 %s\n", i+1, len(folders), folder)
+		files := finder.FindAllFiles(folder)
+		for j, file := range files {
+			log.Printf("正在处理%d/%d\n文件 %s\n", j+1, len(files), file)
+			ext := strings.ToLower(filepath.Ext(file))
+			if ext == ".m2ts" {
+				if err := m2ts2mkv(file); err != nil {
+					log.Printf("处理文件 %s 失败：%s\n", file, err)
+					continue
+				}
+			}
+		}
+	}
+}
 
 func m2ts2mkv(m2ts string) error {
 	fmt.Println("m2ts to mkv")
-	/*
-			ffmpeg -i /vol2/1000/disk3/原盘/unzip/mount/BDMV/STREAM/00005.m2ts \
-		-c:v copy -c:a flac -c:s copy \
-		-map 0 -copy_unknown \
-		-fflags +genpts -avoid_negative_ts make_zero \
-		-f matroska /vol2/1000/disk3/原盘/unzip/让子弹飞.mkv
-	*/
 	var (
 		args []string
 		mkv  string
