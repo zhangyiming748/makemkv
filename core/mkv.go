@@ -11,7 +11,7 @@ import (
 	"github.com/zhangyiming748/finder"
 )
 
-func M2TS2MKV(root string) error {
+func M2TS2MKV(root string, flac bool) error {
 	folders := finder.FindAllFolders(root)
 	for i, folder := range folders {
 		log.Printf("正在处理%d/%d\n文件夹 %s\n", i+1, len(folders), folder)
@@ -20,7 +20,7 @@ func M2TS2MKV(root string) error {
 			log.Printf("正在处理%d/%d\n文件 %s\n", j+1, len(files), file)
 			ext := strings.ToLower(filepath.Ext(file))
 			if ext == ".m2ts" {
-				if err := m2ts2mkv(file); err != nil {
+				if err := m2ts2mkv(file, flac); err != nil {
 					log.Printf("处理文件 %s 失败：%s\n", file, err)
 					continue
 				}
@@ -30,7 +30,7 @@ func M2TS2MKV(root string) error {
 	return nil
 }
 
-func m2ts2mkv(m2ts string) error {
+func m2ts2mkv(m2ts string, flac bool) error {
 	fmt.Println("m2ts to mkv")
 	var (
 		args []string
@@ -40,7 +40,11 @@ func m2ts2mkv(m2ts string) error {
 	mkv = strings.Replace(m2ts, filepath.Ext(m2ts), ".mkv", 1)
 	args = append(args, "-i", m2ts)
 	args = append(args, "-c:v", "copy")
-	args = append(args, "-c:a", "flac")
+	if flac {
+		args = append(args, "-c:a", "flac")
+	} else {
+		args = append(args, "-c:a", "copy")
+	}
 	args = append(args, "-c:s", "copy")
 	args = append(args, "-map", "0")
 	args = append(args, "-copy_unknown")
