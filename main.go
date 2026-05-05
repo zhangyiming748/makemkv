@@ -5,10 +5,11 @@ import (
 	"os"
 	"time"
 
-	"github.com/zhangyiming748/lumberjack"
 	"io"
 	"log"
 	"makemkv/core"
+
+	"github.com/zhangyiming748/lumberjack"
 
 	"github.com/spf13/cobra"
 )
@@ -42,7 +43,8 @@ func main() {
 				return fmt.Errorf("directory path cannot be empty")
 			}
 			flac, _ := cmd.Flags().GetBool("flac")
-			return core.M2TS2MKV(dir, flac)
+			keep, _ := cmd.Flags().GetBool("keep")
+			return core.M2TS2MKV(dir, flac, keep)
 		},
 	}
 
@@ -53,7 +55,10 @@ func main() {
 	// 添加 --flac 参数，控制是否将音频转换为 FLAC 格式
 	m2mCmd.Flags().BoolP("flac", "f", false, "Convert audio to FLAC format (default: false)")
 
-	// 将子命令添加到主命令
+	// 添加 -k/--keep 参数，控制是否保留原始 m2ts 文件
+	m2mCmd.Flags().BoolP("keep", "k", false, "Keep original M2TS files after conversion (default: false)")
+
+	// //将子命令添加到主命令
 	rootCmd.AddCommand(m2mCmd)
 
 	// 执行命令
@@ -67,7 +72,7 @@ func SetLog(l string) {
 	// 设置全局时区为Asia/Shanghai
 	location, err := time.LoadLocation("Asia/Shanghai")
 	if err != nil {
-		log.Printf("无法加载时区 Asia/Shanghai: %v", err)
+		log.Printf("Failed to load timezone Asia/Shanghai: %v", err)
 	} else {
 		time.Local = location
 	}
@@ -80,7 +85,7 @@ func SetLog(l string) {
 	}
 	err = fileLogger.Rotate()
 	if err != nil {
-		log.Println("转换新日志文件失败", err)
+		log.Println("Failed to rotate log file", err)
 	}
 	consoleLogger := log.New(os.Stdout, "CONSOLE: ", log.LstdFlags)
 	log.SetOutput(io.MultiWriter(fileLogger, consoleLogger.Writer()))
