@@ -57,9 +57,10 @@ func m2ts2mkv(m2ts string, flac bool, keep bool) error {
 	log.Printf("Command: %s\n", cmd.String())
 	out, err := cmd.CombinedOutput()
 	if err != nil {
+		log.Printf("Output: %s\n", string(out))
 		return err
 	} else {
-		log.Printf("Output: %s\n", string(out))
+		
 		if keep {
 			return nil
 		} else {
@@ -101,12 +102,12 @@ func mkv2flac(mkv string) error {
 	args = append(args, "-c:s", "copy")
 	args = append(args, tmp_name)
 	cmd = exec.Command("ffmpeg", args...)
-	log.Printf("准备运行的命令是%s\n", cmd.String())
+	log.Printf("Command: %s\n", cmd.String())
 	out, err := cmd.CombinedOutput()
 	if err != nil {
+		log.Printf("Command output: %s\n", string(out))
 		return err
 	} else {
-		log.Printf("命令输出是%s\n", string(out))
 		os.Remove(mkv)
 		os.Rename(tmp_name, mkv)
 		log.Printf("已删除原始文件 %s 并重命名 %s\n", mkv, tmp_name)
