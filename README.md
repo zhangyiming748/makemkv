@@ -7,6 +7,7 @@
 - 🎬 批量转换蓝光原盘中的 M2TS 文件为 MKV 格式
 - 🔄 递归扫描指定目录及其所有子文件夹
 - 🎵 支持选择是否将音频转换为 FLAC 格式
+- 🔊 独立的 MKV 音频转 FLAC 工具
 - 📝 视频和字幕流无损复制，保持原始质量
 - 📋 自动日志记录，方便追踪转换过程
 
@@ -24,6 +25,7 @@ go build -o makemkv.exe
 # 查看帮助
 ./makemkv --help
 ./makemkv m2m --help
+./makemkv flac --help
 
 # 转换指定目录下的所有 M2TS 文件（不转换音频）
 ./makemkv m2m -d /path/to/blu-ray
@@ -31,17 +33,32 @@ go build -o makemkv.exe
 # 转换并同时将音频转为 FLAC 格式
 ./makemkv m2m -d /path/to/blu-ray -f
 ./makemkv m2m -d /path/to/blu-ray --flac
+
+# 将已有 MKV 文件的音频转换为 FLAC
+./makemkv flac -d /path/to/mkv-folder
 ```
 
 ### 命令行参数
+
+#### m2m 命令参数
 
 | 参数 | 短格式 | 说明 | 默认值 |
 |------|--------|------|--------|
 | `--dir` | `-d` | 要搜索 M2TS 文件的根目录（必需） | - |
 | `--flac` | `-f` | 是否将音频转换为 FLAC 格式 | false |
+| `--keep` | `-k` | 转换后保留原始 M2TS 文件 | false |
+| `--help` | `-h` | 显示帮助信息 | - |
+
+#### flac 命令参数
+
+| 参数 | 短格式 | 说明 | 默认值 |
+|------|--------|------|--------|
+| `--dir` | `-d` | 要搜索 MKV 文件的根目录（必需） | - |
 | `--help` | `-h` | 显示帮助信息 | - |
 
 ### 示例
+
+#### M2TS 转 MKV
 
 ```bash
 # 示例 1: 转换目录，保持原始音频格式
@@ -52,11 +69,26 @@ go build -o makemkv.exe
 
 # 示例 3: 使用长参数
 ./makemkv m2m --dir "/path/to/folder" --flac=true
+
+# 示例 4: 转换后保留原始 M2TS 文件
+./makemkv m2m -d "/path/to/folder" -f -k
+```
+
+#### MKV 音频转 FLAC
+
+```bash
+# 示例 5: 将目录下所有 MKV 的音频转为 FLAC
+./makemkv flac -d "/path/to/mkv-folder"
+
+# 示例 6: 使用长参数
+./makemkv flac --dir "/path/to/mkv-folder"
 ```
 
 ## 技术细节
 
 ### FFmpeg 转换参数
+
+#### m2m 命令（M2TS → MKV）
 
 程序使用以下 FFmpeg 参数进行转换：
 
@@ -71,6 +103,16 @@ ffmpeg -i input.m2ts \
   -avoid_negative_ts make_zero \  # 避免负时间戳
   -f matroska \         # 输出格式为 Matroska
   output.mkv
+```
+
+#### flac 命令（MKV 音频 → FLAC）
+
+```bash
+ffmpeg -i input.mkv \
+  -c:v copy \           # 视频流无损复制
+  -c:a flac \           # 音频转换为 FLAC
+  -c:s copy \           # 字幕流无损复制
+  output_tmp.mkv
 ```
 
 ### 日志系统
