@@ -61,6 +61,27 @@ func main() {
 	// //将子命令添加到主命令
 	rootCmd.AddCommand(m2mCmd)
 
+	// 添加 flac 子命令，用于将 MKV 文件中的音频转换为 FLAC
+	var flacCmd = &cobra.Command{
+		Use:   "flac",
+		Short: "Convert audio in MKV files to FLAC format",
+		Long:  "Convert all audio streams in MKV files to FLAC format while keeping video and subtitles unchanged",
+		RunE: func(cmd *cobra.Command, args []string) error {
+			dir, _ := cmd.Flags().GetString("dir")
+			if dir == "" {
+				return fmt.Errorf("directory path cannot be empty")
+			}
+			return core.Mkv2Flac(dir)
+		},
+	}
+
+	// 添加 -d/--dir 参数，并设置为必需
+	flacCmd.Flags().StringP("dir", "d", "", "Root directory to search for MKV files (required)")
+	flacCmd.MarkFlagRequired("dir")
+
+	// 将 flac 子命令添加到主命令
+	rootCmd.AddCommand(flacCmd)
+
 	// 执行命令
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)
