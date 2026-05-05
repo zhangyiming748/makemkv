@@ -13,6 +13,23 @@
 
 ## 安装
 
+### 方式一：下载预编译二进制包（推荐）
+
+从 [GitHub Releases](https://github.com/zhangyiming748/makemkv/releases/latest) 下载最新版本的二进制文件。
+
+#### 直接下载链接
+
+| 平台 | 架构 | 下载链接 |
+|------|------|----------|
+| Windows | amd64 | [makemkv_windows_amd64](https://github.com/zhangyiming748/makemkv/releases/latest/download/makemkv_windows_amd64) |
+| Windows | arm64 | [makemkv_windows_arm64](https://github.com/zhangyiming748/makemkv/releases/latest/download/makemkv_windows_arm64) |
+| macOS | amd64 | [makemkv_darwin_amd64](https://github.com/zhangyiming748/makemkv/releases/latest/download/makemkv_darwin_amd64) |
+| macOS | arm64 | [makemkv_darwin_arm64](https://github.com/zhangyiming748/makemkv/releases/latest/download/makemkv_darwin_arm64) |
+| Linux | amd64 | [makemkv_linux_amd64](https://github.com/zhangyiming748/makemkv/releases/latest/download/makemkv_linux_amd64) |
+| Linux | arm64 | [makemkv_linux_arm64](https://github.com/zhangyiming748/makemkv/releases/latest/download/makemkv_linux_arm64) |
+
+### 方式二：从源码编译
+
 ```bash
 go build -o makemkv.exe
 ```
