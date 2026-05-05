@@ -3,6 +3,7 @@ package core
 import (
 	"fmt"
 	"log"
+	"os"
 
 	"os/exec"
 	"path/filepath"
@@ -59,6 +60,52 @@ func m2ts2mkv(m2ts string, flac bool) error {
 		return err
 	} else {
 		log.Printf("命令输出是%s\n", string(out))
+		return nil
+	}
+}
+
+func Mkv2Flac(root string) error {
+	folders := finder.FindAllFolders(root)
+	for i, folder := range folders {
+		log.Printf("正在处理%d/%d\n文件夹 %s\n", i+1, len(folders), folder)
+		files := finder.FindAllFiles(folder)
+		for j, file := range files {
+			log.Printf("正在处理%d/%d\n文件 %s\n", j+1, len(files), file)
+			ext := strings.ToLower(filepath.Ext(file))
+			if ext == ".mkv" {
+				if err := mkv2flac(file); err != nil {
+					log.Printf("处理文件 %s 失败：%s\n", file, err)
+					continue
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func mkv2flac(mkv string) error {
+	fmt.Println("mkv to flac")
+	var (
+		args     []string
+		tmp_name string
+		cmd      *exec.Cmd
+	)
+	tmp_name = strings.Replace(mkv, filepath.Ext(mkv), "_tmp.mkv", 1)
+	args = append(args, "-i", mkv)
+	args = append(args, "-c:v", "copy")
+	args = append(args, "-c:a", "flac")
+	args = append(args, "-c:s", "copy")
+	args = append(args, tmp_name)
+	cmd = exec.Command("ffmpeg", args...)
+	log.Printf("准备运行的命令是%s\n", cmd.String())
+	out, err := cmd.CombinedOutput()
+	if err != nil {
+		return err
+	} else {
+		log.Printf("命令输出是%s\n", string(out))
+		os.Remove(mkv)
+		os.Rename(tmp_name, mkv)
+		log.Printf("已删除原始文件 %s 并重命名 %s\n", mkv, tmp_name)
 		return nil
 	}
 }
