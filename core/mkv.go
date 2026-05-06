@@ -20,7 +20,7 @@ func M2TS2MKV(root string, flac bool, keep bool) error {
 		for j, file := range files {
 			log.Printf("Processing %d/%d\nFile: %s\n", j+1, len(files), file)
 			ext := strings.ToLower(filepath.Ext(file))
-			if ext == ".m2ts" {
+			if ext == ".m2ts" || ext == ".ts" {
 				if err := m2ts2mkv(file, flac, keep); err != nil {
 					log.Printf("Failed to process file %s: %s\n", file, err)
 					continue
@@ -60,7 +60,7 @@ func m2ts2mkv(m2ts string, flac bool, keep bool) error {
 		log.Printf("Output: %s\n", string(out))
 		return err
 	} else {
-		
+
 		if keep {
 			return nil
 		} else {
